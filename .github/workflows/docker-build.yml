@@ -27,4 +27,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: yourusername/app-name:latest
+          tags: sri4444/sri-docker-images/app-name:latest
