@@ -1,20 +1,20 @@
-# Use lightweight base image
-FROM python:3.10-slim
+FROM nginx:1.27-alpine
 
-# Set working directory
-WORKDIR /app
+# Remove default config
+RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy dependency file first (for caching)
-COPY app/requirements.txt .
+# Create custom config inline
+RUN printf "events {}\n\
+http {\n\
+  server {\n\
+    listen 80;\n\
+    location / {\n\
+      return 200 'Custom NGINX without COPY';\n\
+      add_header Content-Type text/plain;\n\
+    }\n\
+  }\n\
+}\n" > /etc/nginx/nginx.conf
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 80
 
-# Copy application code
-COPY app/ .
-
-# Expose port
-EXPOSE 5000
-
-# Run application
-CMD ["python", "main.py"]
+CMD ["nginx", "-g", "daemon off;"]
